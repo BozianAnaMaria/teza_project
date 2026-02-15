@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "9080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/realestate
+      SPRING_DATASOURCE_USERNAME: app
+      SPRING_DATASOURCE_PASSWORD: appsecret
+      SPRING_AUDIT_DATASOURCE_URL: jdbc:postgresql://db-audit:5432/audit
+      SPRING_AUDIT_DATASOURCE_USERNAME: app
+      SPRING_AUDIT_DATASOURCE_PASSWORD: auditsecret
+    depends_on:
+      db:
+        condition: service_healthy
+      db-audit:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: realestate
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: appsecret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d realestate"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  db-audit:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: audit
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: auditsecret
+    volumes:
+      - postgres_audit_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d audit"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  postgres_audit_data:

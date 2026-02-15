@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: realestate-app
+
+  # Primary datasource (users, offers, notifications)
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/realestate}
+    username: ${SPRING_DATASOURCE_USERNAME:app}
+    password: ${SPRING_DATASOURCE_PASSWORD:appsecret}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+
+  # Audit datasource (action logs - admin only)
+  audit:
+    datasource:
+      url: ${SPRING_AUDIT_DATASOURCE_URL:jdbc:postgresql://localhost:5433/audit}
+      username: ${SPRING_AUDIT_DATASOURCE_USERNAME:app}
+      password: ${SPRING_AUDIT_DATASOURCE_PASSWORD:auditsecret}
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        maximum-pool-size: 3
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  # Serve static frontend from resources/static
+  web:
+    resources:
+      static-locations: classpath:/static/
+
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 24h

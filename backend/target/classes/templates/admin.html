@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Real Estate</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="/" class="logo">REAL ESTATE</a>
+            <nav class="nav">
+                <a href="/">HOME</a>
+                <a href="/manager">MANAGER</a>
+                <a href="/admin" class="active">ADMIN</a>
+            </nav>
+            <div class="header-actions">
+                <span id="user-display" class="user-display"></span>
+                <a href="/" class="btn btn-outline">VIEW SITE</a>
+                <button type="button" id="btn-logout" class="btn btn-outline">LOG OUT</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-container">
+        <div id="access-denied" class="access-denied hidden">
+            <h2>Access denied</h2>
+            <p>You must be logged in as Admin to view this page.</p>
+            <a href="/" class="btn btn-cta">Go to Home</a>
+        </div>
+
+        <div id="admin-content" class="hidden">
+            <div class="tabs">
+                <a href="#" id="tab-users" class="active">Users</a>
+                <a href="#" id="tab-offers">Offers</a>
+                <a href="#" id="tab-subscriptions">Subscriptions</a>
+                <a href="#" id="tab-audit">Audit logs</a>
+            </div>
+
+            <section id="section-users" class="panel">
+                <h2 class="panel-title">Users</h2>
+                <div class="panel-body">
+                    <div class="form-row">
+                        <button type="button" id="btn-add-user" class="btn btn-cta">+ Add user</button>
+                    </div>
+                    <div id="users-loading" class="loading">Loading users…</div>
+                    <div id="users-table-wrap" class="table-wrap hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Roles</th>
+                                    <th>Last login</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-offers" class="panel hidden">
+                <h2 class="panel-title">Offers (Admin: edit / delete)</h2>
+                <div class="panel-body">
+                    <p style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Sample offers</strong> (date în română – adaugă în listă)</p>
+                    <div id="sample-offers-list" class="table-wrap"></div>
+                    <hr style="margin: 1.5rem 0;" />
+                    <div id="admin-offers-loading" class="loading">Loading…</div>
+                    <div id="admin-offers-table-wrap" class="table-wrap hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Location</th>
+                                    <th>Price</th>
+                                    <th>Active</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-offers-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-subscriptions" class="panel hidden">
+                <h2 class="panel-title">Subscriptions</h2>
+                <div class="panel-body">
+                    <div id="admin-subs-loading" class="loading">Loading…</div>
+                    <div id="admin-subs-table-wrap" class="table-wrap hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Offer</th>
+                                    <th>Subscribed at</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-subs-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="admin-subs-empty" class="empty hidden">No subscriptions.</div>
+                </div>
+            </section>
+
+            <section id="section-audit" class="panel hidden">
+                <h2 class="panel-title">Audit logs</h2>
+                <div class="panel-body">
+                    <div class="form-row">
+                        <label>Filter by username <input type="text" id="audit-username" placeholder="Username"></label>
+                        <label>Filter by action <input type="text" id="audit-action" placeholder="e.g. LOGIN"></label>
+                        <button type="button" id="audit-apply" class="btn btn-cta">Apply</button>
+                    </div>
+                    <div id="audit-loading" class="loading">Loading logs…</div>
+                    <div id="audit-table-wrap" class="table-wrap hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Resource</th>
+                                    <th>Details</th>
+                                    <th>IP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="audit-pagination"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="modal-user" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-box">
+            <h3 id="modal-user-title">Add user</h3>
+            <form id="form-user">
+                <input type="hidden" id="user-id" name="id">
+                <div class="form-row">
+                    <label>Username <input type="text" name="username" required></label>
+                </div>
+                <div class="form-row">
+                    <label>Email <input type="email" name="email"></label>
+                </div>
+                <div class="form-row" id="row-password">
+                    <label>Password <input type="password" name="password"></label>
+                </div>
+                <div class="form-row">
+                    <label>Roles (comma-separated: USER, MANAGER, ADMIN) <input type="text" name="roles" placeholder="USER"></label>
+                </div>
+                <p id="user-form-error" class="error hidden"></p>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-cta">Save</button>
+                    <button type="button" id="user-cancel" class="btn btn-outline">Cancel</button>
+                </div>
+            </form>
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
+    <div id="modal-offer" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-box">
+            <h3 id="modal-offer-title">Edit offer</h3>
+            <form id="form-offer">
+                <input type="hidden" id="offer-id" name="id">
+                <div class="form-row">
+                    <label>Title <input type="text" name="title" required></label>
+                </div>
+                <div class="form-row">
+                    <label>Description <textarea name="description"></textarea></label>
+                </div>
+                <div class="form-row">
+                    <label>Price (EUR) <input type="number" name="price" step="0.01" min="0" required></label>
+                </div>
+                <div class="form-row">
+                    <label>Location <input type="text" name="location"></label>
+                </div>
+                <div class="form-row">
+                    <label>Image URL <input type="url" name="imageUrl"></label>
+                </div>
+                <div class="form-row">
+                    <label><input type="checkbox" name="active" checked> Active</label>
+                </div>
+                <p id="offer-form-error" class="error hidden"></p>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-cta">Save</button>
+                    <button type="button" id="offer-cancel" class="btn btn-outline">Cancel</button>
+                </div>
+            </form>
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

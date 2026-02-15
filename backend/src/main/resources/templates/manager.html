@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager — Real Estate</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="/" class="logo">REAL ESTATE</a>
+            <nav class="nav">
+                <a href="/">HOME</a>
+                <a href="/manager" class="active">MANAGER</a>
+            </nav>
+            <div class="header-actions">
+                <span id="user-display" class="user-display"></span>
+                <a href="/" class="btn btn-outline">VIEW SITE</a>
+                <button type="button" id="btn-logout" class="btn btn-outline">LOG OUT</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-container">
+        <div id="access-denied" class="access-denied hidden">
+            <h2>Access denied</h2>
+            <p>You must be logged in as a Manager or Admin to view this page.</p>
+            <a href="/" class="btn btn-cta">Go to Home</a>
+        </div>
+
+        <div id="manager-content" class="hidden">
+            <div class="tabs">
+                <a href="#" id="tab-offers" class="active">Offers</a>
+                <a href="#" id="tab-subscriptions">Subscriptions</a>
+            </div>
+
+            <section id="section-offers" class="panel">
+                <h2 class="panel-title">Offers — View &amp; Add</h2>
+                <div class="panel-body">
+                    <div class="form-row">
+                        <button type="button" id="btn-add-offer" class="btn btn-cta">+ Add offer</button>
+                    </div>
+                    <div id="offers-loading" class="loading">Loading offers…</div>
+                    <div id="offers-table-wrap" class="table-wrap hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Location</th>
+                                    <th>Price</th>
+                                    <th>Active</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="offers-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="offers-empty" class="empty hidden">No offers yet. Add one above.</div>
+                </div>
+            </section>
+
+            <section id="section-subscriptions" class="panel hidden">
+                <h2 class="panel-title">Who wants to be notified</h2>
+                <div class="panel-body">
+                    <div id="subs-loading" class="loading">Loading subscriptions…</div>
+                    <div id="subs-table-wrap" class="table-wrap hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Offer</th>
+                                    <th>Subscribed at</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subs-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="subs-empty" class="empty hidden">No subscriptions yet.</div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="modal-offer" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-box">
+            <h3 id="modal-offer-title">Add offer</h3>
+            <form id="form-offer">
+                <input type="hidden" id="offer-id" name="id">
+                <div class="form-row">
+                    <label>Title <input type="text" name="title" required></label>
+                </div>
+                <div class="form-row">
+                    <label>Description <textarea name="description"></textarea></label>
+                </div>
+                <div class="form-row">
+                    <label>Price (EUR) <input type="number" name="price" step="0.01" min="0" required></label>
+                </div>
+                <div class="form-row">
+                    <label>Location <input type="text" name="location"></label>
+                </div>
+                <div class="form-row">
+                    <label>Image URL <input type="url" name="imageUrl"></label>
+                </div>
+                <div class="form-row" id="row-active">
+                    <label><input type="checkbox" name="active" checked> Active</label>
+                </div>
+                <p id="offer-form-error" class="error hidden"></p>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-cta">Save</button>
+                    <button type="button" id="offer-cancel" class="btn btn-outline">Cancel</button>
+                </div>
+            </form>
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
+    <script src="/js/manager.js"></script>
+</body>
+</html>
