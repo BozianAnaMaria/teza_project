@@ -76,7 +76,8 @@ When a user subscribes to an offer, they should be directed to a Telegram bot fo
 
 ## Security notes
 
-- Passwords are hashed with BCrypt. Sign-up and admin user creation enforce strong password rules (length, upper/lower/digit/safe symbol; symbols that could aid SQL/XSS are disallowed).
-- Manager and Admin pages are served only at `/manager` and `/admin` after authentication and role check; no direct static HTML URLs.
+- **Passwords**: Stored as BCrypt hashes (strength 12). On save (register, admin create/update), the raw password is hashed with `BCryptPasswordEncoder`; on login, Spring compares the submitted password to the stored hash. Example: raw `Admin1!` → stored like `$2a$12$...` (60 chars). A `CommandLineRunner` on startup re-encodes admin and manager passwords so existing DBs stay compatible after security changes.
+- **Routes**: `/admin` and `/admin/**` require role `ADMIN`; `/manager` and `/manager/**` require `MANAGER` or `ADMIN`. Normal users get 403 and are redirected to home with login prompt. Manager/Admin HTML is served from `templates/` via controller endpoints only; there are no `admin.html` or `manager.html` in the static public folder.
+- Sign-up and admin user creation enforce strong password rules (length, upper/lower/digit/safe symbol; symbols that could aid SQL/XSS are disallowed).
 - Audit logs are in a separate DB; only admin can read them.
 - Change default admin/manager passwords before any production or public use.

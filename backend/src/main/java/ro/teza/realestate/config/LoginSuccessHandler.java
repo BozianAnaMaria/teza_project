@@ -10,6 +10,8 @@ import ro.teza.realestate.entity.User;
 import ro.teza.realestate.service.UserService;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -27,9 +29,18 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         if (user != null) {
             userService.recordLogin(user, request);
         }
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/json");
         UserDto dto = userService.toDto(user);
-        objectMapper.writeValue(response.getOutputStream(), dto);
+        if (dto == null) {
+            dto = new UserDto();
+            dto.setUsername(authentication.getName());
+            dto.setRoles(Collections.emptySet());
+        }
+        String json = objectMapper.writeValueAsString(dto);
+        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json;charset=UTF-8");
+        response.setContentLength(bytes.length);
+        response.getOutputStream().write(bytes);
+        response.getOutputStream().flush();
     }
 }

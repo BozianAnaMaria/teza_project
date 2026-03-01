@@ -63,10 +63,11 @@
         userDisplay.textContent = currentUser.username;
         show(userDisplay);
       }
-      if (navManager && currentUser.roles && (currentUser.roles.indexOf('MANAGER') >= 0 || currentUser.roles.indexOf('ADMIN') >= 0)) {
+      var roles = getRoleNames(currentUser.roles);
+      if (navManager && (roles.indexOf('MANAGER') >= 0 || roles.indexOf('ADMIN') >= 0)) {
         show(navManager);
       } else if (navManager) { hide(navManager); }
-      if (navAdmin && currentUser.roles && currentUser.roles.indexOf('ADMIN') >= 0) {
+      if (navAdmin && roles.indexOf('ADMIN') >= 0) {
         show(navAdmin);
       } else if (navAdmin) { hide(navAdmin); }
     } else {
@@ -114,22 +115,62 @@
     });
   });
 
+  function getRoleNames(roles) {
+    if (!roles || !Array.isArray(roles)) return [];
+    return roles.map(function (r) { return typeof r === 'string' ? r : (r && r.name ? r.name : String(r)); });
+  }
+
   document.getElementById('form-login').addEventListener('submit', async function (e) {
     e.preventDefault();
     const form = e.target;
     const username = form.username.value.trim();
     const password = form.password.value;
     showError('login-error', '');
-    const res = await post('/auth/login', { username, password });
-    if (!res.ok) {
-      const data = await res.json().catch(function () { return {}; });
-      showError('login-error', data.error || 'Login failed.');
+    let res;
+    try {
+      res = await post('/auth/login', { username, password });
+    } catch (err) {
+      showError('login-error', 'Something went wrong. Please try again.');
       return;
     }
-    const user = await res.json();
-    currentUser = user;
+    if (!res.ok) {
+      const data = await res.json().catch(function () { return {}; });
+      showError('login-error', data.error || 'Incorrect username or password. Please try again.');
+      return;
+    }
+
+    // Login succeeded, load the current user from the session
+    const user = await loadCurrentUser().catch(function () { return null; });
+    if (!user || !user.username) {
+      showError('login-error', 'Something went wrong. Please try again.');
+      return;
+    }
+
     closeModal('modal-login');
-    updateHeader();
+    // Header already updated by loadCurrentUser
+    var params = new URLSearchParams(window.location.search);
+    var next = params.get('next');
+    var roleNames = getRoleNames(user.roles);
+    var isAdmin = roleNames.indexOf('ADMIN') >= 0;
+    var isManager = roleNames.indexOf('MANAGER') >= 0;
+    // Redirect to requested page if they came from /manager or /admin
+    if (next === '/admin' && isAdmin) {
+      window.location.href = '/admin';
+      return;
+    }
+    if (next === '/manager' && (isManager || isAdmin)) {
+      window.location.href = '/manager';
+      return;
+    }
+    // Otherwise redirect by role: admin -> /admin, manager -> /manager
+    if (isAdmin) {
+      window.location.href = '/admin';
+      return;
+    }
+    if (isManager) {
+      window.location.href = '/manager';
+      return;
+    }
     renderOffers();
   });
 
@@ -158,7 +199,7 @@
     const res = await post('/auth/register', { username, email: email || undefined, password });
     if (!res.ok) {
       const data = await res.json().catch(function () { return {}; });
-      showError('signup-error', data.error || 'Registration failed.');
+      showError('signup-error', data.error || 'Something went wrong. Please try again.');
       return;
     }
     currentUser = await res.json();
@@ -171,6 +212,8 @@
     const list = document.getElementById('offers-list');
     const loading = document.getElementById('offers-loading');
     const empty = document.getElementById('offers-empty');
+    const isOffersPage = document.body && document.body.getAttribute('data-page') === 'offers';
+
     list.innerHTML = '';
     show(loading);
     hide(empty);
@@ -186,30 +229,77 @@
       return;
     }
 
-    document.getElementById('stat-offers').textContent = offers.length;
+    var statEl = document.getElementById('stat-offers');
+    if (statEl) {
+      statEl.textContent = offers.length;
+    }
 
     offers.forEach(function (offer) {
       const card = document.createElement('div');
       card.className = 'offer-card';
       const imgUrl = offer.imageUrl || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
-      card.innerHTML =
-        '<div class="offer-card-image" style="background-image:url(\'' + imgUrl + '\')"></div>' +
-        '<div class="offer-card-body">' +
-          '<h3 class="offer-card-title">' + escapeHtml(offer.title) + '</h3>' +
-          (offer.location ? '<p class="offer-card-location">' + escapeHtml(offer.location) + '</p>' : '') +
-          '<p class="offer-card-price">' + formatPrice(offer.price) + '</p>' +
-          '<button type="button" class="btn-notify ' + (offer.subscribed ? 'subscribed' : '') + '" data-id="' + offer.id + '" data-subscribed="' + !!offer.subscribed + '">' +
-            (offer.subscribed ? 'Notifying' : 'Get notified') +
-          '</button>' +
-        '</div>';
+
+      if (isOffersPage) {
+        var desc = offer.description || '';
+        if (desc.length > 150) desc = desc.substring(0, 147) + '...';
+        card.innerHTML =
+          '<div class="offer-card-image" style="background-image:url(\'' + imgUrl + '\')"></div>' +
+          '<div class="offer-card-body">' +
+            '<h3 class="offer-card-title">' + escapeHtml(offer.title) + '</h3>' +
+            (offer.location ? '<p class="offer-card-location">' + escapeHtml(offer.location) + '</p>' : '') +
+            '<p class="offer-card-price">' + formatPrice(offer.price) + '</p>' +
+            (desc ? '<p class="offer-card-description">' + escapeHtml(desc) + '</p>' : '') +
+            '<div class="offer-card-actions">' +
+              '<button type="button" class="btn-offer btn-offer-primary btn-view-more" data-id="' + offer.id + '">View more</button>' +
+              '<button type="button" class="btn-offer btn-notify ' + (offer.subscribed ? 'subscribed' : '') + '" data-id="' + offer.id + '" data-subscribed="' + !!offer.subscribed + '">' +
+                (offer.subscribed ? 'Notifying' : 'Get notified') +
+              '</button>' +
+            '</div>' +
+          '</div>';
+      } else {
+        card.innerHTML =
+          '<div class="offer-card-image" style="background-image:url(\'' + imgUrl + '\')"></div>' +
+          '<div class="offer-card-body">' +
+            '<h3 class="offer-card-title">' + escapeHtml(offer.title) + '</h3>' +
+            (offer.location ? '<p class="offer-card-location">' + escapeHtml(offer.location) + '</p>' : '') +
+            '<p class="offer-card-price">' + formatPrice(offer.price) + '</p>' +
+            '<button type="button" class="btn-notify ' + (offer.subscribed ? 'subscribed' : '') + '" data-id="' + offer.id + '" data-subscribed="' + !!offer.subscribed + '">' +
+              (offer.subscribed ? 'Notifying' : 'Get notified') +
+            '</button>' +
+          '</div>';
+      }
+
       list.appendChild(card);
     });
 
-    list.querySelectorAll('.btn-notify').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        handleNotify(btn);
+    if (isOffersPage) {
+      list.querySelectorAll('.btn-view-more').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (!currentUser) {
+            openModal('modal-login');
+            return;
+          }
+          // For now, show full description by navigating to a dedicated page later.
+          // Placeholder: you can extend this to open a details view.
+          // window.location.href = '/offers/' + btn.getAttribute('data-id');
+        });
       });
-    });
+      list.querySelectorAll('.btn-notify').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (!currentUser) {
+            openModal('modal-login');
+            return;
+          }
+          handleNotify(btn);
+        });
+      });
+    } else {
+      list.querySelectorAll('.btn-notify').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          handleNotify(btn);
+        });
+      });
+    }
   }
 
   function escapeHtml(s) {
@@ -239,7 +329,7 @@
 
     if (!res.ok) {
       const data = await res.json().catch(function () { return {}; });
-      alert(data.error || 'Action failed.');
+      alert(data.error || 'Something went wrong. Please try again.');
       return;
     }
 
@@ -253,7 +343,7 @@
     var params = new URLSearchParams(window.location.search);
     if (params.get('login') === '1') {
       openModal('modal-login');
-      window.history.replaceState({}, document.title, window.location.pathname);
+      // Keep ?login=1&next= in URL so we can redirect after login
     }
   });
 })();

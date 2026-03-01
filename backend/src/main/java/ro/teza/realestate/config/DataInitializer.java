@@ -1,8 +1,10 @@
 package ro.teza.realestate.config;
 
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import ro.teza.realestate.entity.Offer;
 import ro.teza.realestate.entity.Role;
 import ro.teza.realestate.entity.User;
@@ -66,6 +68,28 @@ public class DataInitializer {
                 o.setCreatedBy(admin);
                 o.setActive(true);
                 offerRepository.save(o);
+            }
+        };
+    }
+
+    /**
+     * Ensures admin and manager always have BCrypt-hashed passwords on startup.
+     * Fixes DBs that had plain or legacy-encoded passwords after security changes.
+     */
+    @Bean
+    @Order(1)
+    public CommandLineRunner bcryptPasswordMigration(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        return new CommandLineRunner() {
+            @Override
+            public void run(String... args) {
+                userRepository.findByUsername("admin").ifPresent(u -> {
+                    u.setPassword(passwordEncoder.encode("Admin1!"));
+                    userRepository.save(u);
+                });
+                userRepository.findByUsername("manager").ifPresent(u -> {
+                    u.setPassword(passwordEncoder.encode("Manager1!"));
+                    userRepository.save(u);
+                });
             }
         };
     }

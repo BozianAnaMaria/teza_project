@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offers — Real Estate</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-page="offers">
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">REAL ESTATE</a>
+      <nav class="nav">
+        <a href="/">HOME</a>
+        <a href="/offers" class="active">OFFERS</a>
+        <a href="/#about">ABOUT</a>
+        <a href="/#contacts">CONTACTS</a>
+        <a href="/manager" id="nav-manager" class="hidden">MANAGER</a>
+        <a href="/admin" id="nav-admin" class="hidden">ADMIN</a>
+      </nav>
+      <div class="header-actions">
+        <span id="user-display" class="user-display hidden"></span>
+        <button type="button" id="btn-login" class="btn btn-outline">LOG IN</button>
+        <button type="button" id="btn-signup" class="btn btn-cta">SIGN UP</button>
+        <button type="button" id="btn-logout" class="btn btn-outline hidden">LOG OUT</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="offers-section">
+      <h1 class="section-title">All offers</h1>
+      <p class="section-subtitle">
+        Browse all active listings. Log in to see full details and get notified about changes.
+      </p>
+
+      <div id="offers-list" class="offers-grid"></div>
+      <div id="offers-loading" class="loading">Loading offers…</div>
+      <div id="offers-empty" class="empty hidden">No offers at the moment.</div>
+    </section>
+  </main>
+
+  <!-- Auth modals (same structure as index.html) -->
+  <div id="modal-login" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-box">
+      <h3>Log in</h3>
+      <form id="form-login">
+        <label>Username <input type="text" name="username" required autocomplete="username"></label>
+        <label>Password <input type="password" name="password" required autocomplete="current-password"></label>
+        <p id="login-error" class="error hidden"></p>
+        <button type="submit" class="btn btn-cta">LOG IN</button>
+      </form>
+      <button type="button" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+  </div>
+  <div id="modal-signup" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-box">
+      <h3>Sign up</h3>
+      <form id="form-signup">
+        <label>Username <input type="text" name="username" required minlength="2" autocomplete="username"></label>
+        <label>Email <input type="email" name="email" autocomplete="email"></label>
+        <label>Password <input type="password" name="password" required minlength="6" autocomplete="new-password"></label>
+        <p class="form-hint">Min 6 characters, one uppercase, one lowercase, one number, one symbol (!#$%&*()-_=+[]{}|;:,.?/~). No quotes or &lt;&gt;</p>
+        <p id="signup-error" class="error hidden"></p>
+        <button type="submit" class="btn btn-cta">SIGN UP</button>
+      </form>
+      <button type="button" class="modal-close" aria-label="Close">&times;</button>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
+

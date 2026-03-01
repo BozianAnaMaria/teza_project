@@ -38,10 +38,11 @@ public class SecurityConfig {
             )
             .addFilterBefore(jsonLoginFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
-                // Manager/Admin pages: only via secured routes (role-checked in controller)
-                .requestMatchers("/manager", "/admin").authenticated()
+                // Role-based page access: only ADMIN for /admin, MANAGER or ADMIN for /manager
+                .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
+                .requestMatchers("/manager", "/manager/**").hasAnyRole("MANAGER", "ADMIN")
                 // Static and landing page – allow all (no manager.html / admin.html – use /manager, /admin)
-                .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                .requestMatchers("/", "/index.html", "/offers", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                 // Auth endpoints
                 .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/current").permitAll()
                 .requestMatchers("/api/auth/logout").authenticated()
