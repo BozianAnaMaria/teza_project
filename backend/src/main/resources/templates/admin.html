@@ -34,6 +34,7 @@
             <div class="tabs">
                 <a href="#" id="tab-users" class="active">Users</a>
                 <a href="#" id="tab-offers">Offers</a>
+                <a href="#" id="tab-filters">Filters</a>
                 <a href="#" id="tab-subscriptions">Subscriptions</a>
                 <a href="#" id="tab-audit">Audit logs</a>
             </div>
@@ -83,6 +84,31 @@
                                 </tr>
                             </thead>
                             <tbody id="admin-offers-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-filters" class="panel hidden">
+                <h2 class="panel-title">Filter Management</h2>
+                <div class="panel-body">
+                    <div class="form-row">
+                        <button type="button" id="btn-add-filter" class="btn btn-cta">+ Create Filter</button>
+                    </div>
+                    <div id="filters-loading" class="loading">Loading filters…</div>
+                    <div id="filters-table-wrap" class="table-wrap hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Active</th>
+                                    <th>Criteria</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="filters-tbody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -194,6 +220,66 @@
                 <div class="form-actions">
                     <button type="submit" class="btn btn-cta">Save</button>
                     <button type="button" id="offer-cancel" class="btn btn-outline">Cancel</button>
+                </div>
+            </form>
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
+    <div id="modal-filter" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-box modal-box-large">
+            <h3 id="modal-filter-title">Create Filter</h3>
+            <form id="form-filter">
+                <input type="hidden" id="filter-id" name="id">
+                <div class="form-row">
+                    <label>Filter Name <input type="text" name="name" required placeholder="e.g., Affordable Apartments"></label>
+                </div>
+                <div class="form-row">
+                    <label>Description <textarea name="description" rows="2" placeholder="Brief description of this filter"></textarea></label>
+                </div>
+                <div class="form-row">
+                    <label><input type="checkbox" name="active" checked> Active (visible to users)</label>
+                </div>
+
+                <h4 style="margin-top: 1.5rem; margin-bottom: 1rem; font-size: 1rem;">Filter Criteria</h4>
+
+                <div class="form-row">
+                    <label>Categories (comma-separated)
+                        <input type="text" name="categories" placeholder="e.g., Sale, Rent">
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label>Label IDs (comma-separated)
+                        <input type="text" name="labelIds" placeholder="e.g., 1, 2, 3">
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label>Min Price (EUR) <input type="number" name="minPrice" step="0.01" min="0" placeholder="Leave empty for no minimum"></label>
+                </div>
+
+                <div class="form-row">
+                    <label>Max Price (EUR) <input type="number" name="maxPrice" step="0.01" min="0" placeholder="Leave empty for no maximum"></label>
+                </div>
+
+                <div class="form-row">
+                    <label>Location <input type="text" name="location" placeholder="e.g., Chișinău, Centru"></label>
+                </div>
+
+                <div class="form-row">
+                    <label>Start Date <input type="date" name="startDate"></label>
+                </div>
+
+                <div class="form-row">
+                    <label>End Date <input type="date" name="endDate"></label>
+                </div>
+
+                <p id="filter-form-error" class="error hidden"></p>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-cta">Save Filter</button>
+                    <button type="button" id="filter-cancel" class="btn btn-outline">Cancel</button>
                 </div>
             </form>
             <button type="button" class="modal-close" aria-label="Close">&times;</button>

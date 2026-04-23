@@ -1,33 +1,49 @@
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\config\LoginFailureHandler.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\validation\ValidPassword.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\entity\User.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\repository\OfferRepository.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\repository\UserRepository.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\entity\Offer.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\config\CustomUserDetailsService.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\config\SecurityConfig.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\service\UserService.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\controller\AdminController.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\controller\SecuredPagesController.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\repository\NotificationSubscriptionRepository.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\audit\service\AuditService.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\config\LoginSuccessHandler.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\service\SubscriptionService.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\audit\repository\AuditLogRepository.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\RealEstateApplication.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\audit\config\AuditDataSourceConfig.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\dto\UserDto.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\controller\AuthController.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\config\DataInitializer.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\controller\SubscriptionController.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\entity\NotificationSubscription.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\controller\ValidationExceptionHandler.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\service\OfferService.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\config\JsonLoginFilter.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\entity\Role.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\validation\PasswordValidator.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\config\PrimaryJpaConfig.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\controller\OfferController.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\audit\entity\AuditLog.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\dto\OfferDto.java
-C:\a_teza\teza_project\backend\src\main\java\ro\teza\realestate\config\AuthConfig.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/dto/UserDto.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/dto/FilterDto.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/audit/repository/AuditLogRepository.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/service/UserService.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/dto/LabelDto.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/entity/User.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/validation/PasswordValidator.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/repository/NotificationSubscriptionRepository.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/repository/UserRepository.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/controller/SecuredPagesController.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/config/JsonLoginFilter.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/validation/ValidPassword.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/config/DataInitializer.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/service/LabelService.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/config/AuthConfig.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/controller/AuthController.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/controller/AdminController.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/entity/Role.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/service/FilterSubscriptionService.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/service/SubscriptionService.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/repository/LabelRepository.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/dto/OfferDto.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/entity/Label.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/dto/FilterCriteriaDto.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/config/LoginSuccessHandler.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/repository/FilterRepository.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/repository/OfferRepository.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/audit/config/AuditDataSourceConfig.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/config/CustomUserDetailsService.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/entity/Offer.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/controller/ValidationExceptionHandler.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/RealEstateApplication.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/service/FilterService.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/config/LoginFailureHandler.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/entity/FilterSubscription.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/repository/FilterSubscriptionRepository.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/entity/NotificationSubscription.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/service/NotificationService.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/controller/OfferController.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/controller/FilterController.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/entity/Filter.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/audit/entity/AuditLog.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/controller/ManagerController.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/service/OfferService.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/dto/FilterSubscriptionDto.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/audit/service/AuditService.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/config/SecurityConfig.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/controller/SubscriptionController.java
+/Users/abozian/VS Code/teza_project/backend/src/main/java/ro/teza/realestate/config/PrimaryJpaConfig.java

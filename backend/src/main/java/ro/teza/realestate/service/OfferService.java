@@ -21,13 +21,19 @@ public class OfferService {
     private final OfferRepository offerRepository;
     private final NotificationSubscriptionRepository subscriptionRepository;
     private final AuditService auditService;
+    private final NotificationService notificationService;
+    private final LabelService labelService;
 
     public OfferService(OfferRepository offerRepository,
                         NotificationSubscriptionRepository subscriptionRepository,
-                        AuditService auditService) {
+                        AuditService auditService,
+                        NotificationService notificationService,
+                        LabelService labelService) {
         this.offerRepository = offerRepository;
         this.subscriptionRepository = subscriptionRepository;
         this.auditService = auditService;
+        this.notificationService = notificationService;
+        this.labelService = labelService;
     }
 
     @Transactional(readOnly = true)
@@ -59,6 +65,10 @@ public class OfferService {
         offer.setCreatedBy(createdBy);
         offer = offerRepository.save(offer);
         auditService.log(createdBy.getUsername(), "CREATE_OFFER", "Offer", offer.getId().toString(), offer.getTitle(), request);
+
+        // Trigger filter-based notifications for the new offer
+        notificationService.processNewOffer(offer);
+
         return offer;
     }
 
@@ -87,6 +97,10 @@ public class OfferService {
         dto.setPrice(offer.getPrice());
         dto.setLocation(offer.getLocation());
         dto.setImageUrl(offer.getImageUrl());
+        dto.setCategory(offer.getCategory());
+        dto.setLabels(offer.getLabels().stream()
+            .map(labelService::toDto)
+            .toList());
         dto.setCreatedAt(offer.getCreatedAt());
         dto.setUpdatedAt(offer.getUpdatedAt());
         dto.setActive(offer.isActive());
@@ -101,6 +115,7 @@ public class OfferService {
         if (dto.getPrice() != null) offer.setPrice(dto.getPrice());
         if (dto.getLocation() != null) offer.setLocation(dto.getLocation());
         if (dto.getImageUrl() != null) offer.setImageUrl(dto.getImageUrl());
+        if (dto.getCategory() != null) offer.setCategory(dto.getCategory());
         offer.setActive(dto.isActive());
     }
 }

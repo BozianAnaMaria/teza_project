@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter System Demo - Real Estate App</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        h1 { color: #333; }
+        .section {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #007bff;
+        }
+        .endpoint-method {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+        }
+        .get { background: #28a745; color: white; }
+        .post { background: #007bff; color: white; }
+        .put { background: #ffc107; color: #333; }
+        .delete { background: #dc3545; color: white; }
+        code {
+            background: #f4f4f4;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+        .admin-only { background: #dc3545; color: white; }
+        .manager-only { background: #ffc107; color: #333; }
+        .auth-required { background: #17a2b8; color: white; }
+        .public { background: #6c757d; color: white; }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Filtering System - Implementation Demo</h1>
+
+    <div class="section">
+        <h2>✅ What's Been Implemented</h2>
+        <ul class="feature-list">
+            <li><strong>Dynamic Filtering System</strong> - Filter offers by category, labels, price range, date range, and location</li>
+            <li><strong>Combinable Filters</strong> - Apply multiple filter criteria simultaneously</li>
+            <li><strong>Filter Subscriptions</strong> - Users can subscribe to filters and receive notifications for new matching offers</li>
+            <li><strong>Smart Notifications</strong> - Only triggered for NEW offers created after subscription (not past ones)</li>
+            <li><strong>Label Management</strong> - Managers can create and assign labels to offers</li>
+            <li><strong>Filter Administration</strong> - Only admins can create and delete filter definitions</li>
+            <li><strong>Visible Active Filters</strong> - UI clearly shows which filters are currently active</li>
+            <li><strong>Role-Based Access Control</strong> - Admin, Manager, and User permissions properly configured</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>🎯 Filter Criteria</h2>
+        <p>All criteria are optional and can be combined:</p>
+        <pre>{
+  "categories": ["Sale", "Rent", "Commercial"],
+  "labelIds": [1, 2, 3],
+  "minPrice": 10000,
+  "maxPrice": 100000,
+  "startDate": "2026-01-01T00:00:00Z",
+  "endDate": "2026-12-31T23:59:59Z",
+  "location": "Chișinău"
+}</pre>
+    </div>
+
+    <div class="section">
+        <h2>🔌 API Endpoints</h2>
+
+        <h3>👥 User Endpoints (Public & Authenticated)</h3>
+
+        <div class="endpoint">
+            <span class="endpoint-method get">GET</span>
+            <code>/api/filters</code>
+            <span class="role-badge public">Public</span>
+            <p>List all active filters available for users</p>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method get">GET</span>
+            <code>/api/filters/{id}</code>
+            <span class="role-badge public">Public</span>
+            <p>Get a specific filter by ID</p>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method post">POST</span>
+            <code>/api/filters/apply</code>
+            <span class="role-badge public">Public</span>
+            <p>Apply filter criteria to get matching offers</p>
+            <pre>{
+  "categories": ["Sale"],
+  "minPrice": 30000,
+  "maxPrice": 80000,
+  "location": "Centru"
+}</pre>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method post">POST</span>
+            <code>/api/filters/{id}/subscribe</code>
+            <span class="role-badge auth-required">Authenticated</span>
+            <p>Subscribe to a filter to receive notifications for new matching offers</p>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method delete">DELETE</span>
+            <code>/api/filters/{id}/subscribe</code>
+            <span class="role-badge auth-required">Authenticated</span>
+            <p>Unsubscribe from a filter</p>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method get">GET</span>
+            <code>/api/filters/subscriptions</code>
+            <span class="role-badge auth-required">Authenticated</span>
+            <p>Get current user's filter subscriptions</p>
+        </div>
+
+        <h3>👔 Manager Endpoints</h3>
+
+        <div class="endpoint">
+            <span class="endpoint-method get">GET</span>
+            <code>/api/manager/labels</code>
+            <span class="role-badge manager-only">Manager + Admin</span>
+            <p>List all labels</p>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method post">POST</span>
+            <code>/api/manager/labels</code>
+            <span class="role-badge manager-only">Manager + Admin</span>
+            <p>Create a new label</p>
+            <pre>{
+  "name": "Luxury",
+  "description": "Premium high-end properties",
+  "color": "#FFD700"
+}</pre>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method put">PUT</span>
+            <code>/api/manager/labels/{id}</code>
+            <span class="role-badge manager-only">Manager + Admin</span>
+            <p>Update a label</p>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method delete">DELETE</span>
+            <code>/api/manager/labels/{id}</code>
+            <span class="role-badge manager-only">Manager + Admin</span>
+            <p>Delete a label</p>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method post">POST</span>
+            <code>/api/manager/offers/{offerId}/labels/{labelId}</code>
+            <span class="role-badge manager-only">Manager + Admin</span>
+            <p>Assign a label to an offer</p>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method delete">DELETE</span>
+            <code>/api/manager/offers/{offerId}/labels/{labelId}</code>
+            <span class="role-badge manager-only">Manager + Admin</span>
+            <p>Remove a label from an offer</p>
+        </div>
+
+        <h3>🔒 Admin Endpoints</h3>
+
+        <div class="endpoint">
+            <span class="endpoint-method get">GET</span>
+            <code>/api/admin/filters</code>
+            <span class="role-badge admin-only">Admin Only</span>
+            <p>List all filters (including inactive)</p>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method post">POST</span>
+            <code>/api/admin/filters</code>
+            <span class="role-badge admin-only">Admin Only</span>
+            <p>Create a new filter definition</p>
+            <pre>{
+  "name": "Affordable Apartments",
+  "description": "Apartments under 60,000 EUR in city center",
+  "active": true,
+  "criteria": {
+    "categories": ["Sale"],
+    "maxPrice": 60000,
+    "location": "Centru"
+  }
+}</pre>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method put">PUT</span>
+            <code>/api/admin/filters/{id}</code>
+            <span class="role-badge admin-only">Admin Only</span>
+            <p>Update a filter definition</p>
+        </div>
+
+        <div class="endpoint">
+            <span class="endpoint-method delete">DELETE</span>
+            <code>/api/admin/filters/{id}</code>
+            <span class="role-badge admin-only">Admin Only</span>
+            <p>Delete a filter</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔔 Notification Flow</h2>
+        <ol>
+            <li><strong>User subscribes to a filter</strong> - System records <code>lastNotifiedAt = now()</code></li>
+            <li><strong>New offer is created</strong> - <code>NotificationService.processNewOffer()</code> is triggered</li>
+            <li><strong>System evaluates filters</strong> - Checks all active filters against the new offer</li>
+            <li><strong>Find matching subscriptions</strong> - For each matching filter, finds user subscriptions</li>
+            <li><strong>Smart notification logic</strong> - Only notifies if <code>offer.createdAt > subscription.lastNotifiedAt</code></li>
+            <li><strong>Send notifications</strong> - Currently logged (extensible to email/Telegram/push)</li>
+            <li><strong>Update timestamp</strong> - Sets <code>lastNotifiedAt = now()</code> to prevent duplicates</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>🚀 How to Test</h2>
+
+        <h3>1. Start the Application</h3>
+        <pre>cd backend
+mvn spring-boot:run</pre>
+
+        <h3>2. Access the Application</h3>
+        <p>Open <a href="http://localhost:8080" target="_blank">http://localhost:8080</a></p>
+        <p>The filter panel is visible on the main offers page!</p>
+
+        <h3>3. Test with cURL</h3>
+
+        <h4>List Active Filters:</h4>
+        <pre>curl http://localhost:8080/api/filters</pre>
+
+        <h4>Apply Filters:</h4>
+        <pre>curl -X POST http://localhost:8080/api/filters/apply \
+  -H "Content-Type: application/json" \
+  -d '{
+    "categories": ["Sale"],
+    "minPrice": 30000,
+    "maxPrice": 80000,
+    "location": "Chișinău"
+  }'</pre>
+
+        <h4>Create a Label (as Manager):</h4>
+        <pre>curl -X POST http://localhost:8080/api/manager/labels \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Premium",
+    "description": "High-end properties",
+    "color": "#FFD700"
+  }'</pre>
+
+        <h4>Create a Filter (as Admin):</h4>
+        <pre>curl -X POST http://localhost:8080/api/admin/filters \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Budget Apartments",
+    "description": "Affordable apartments under 50k",
+    "active": true,
+    "criteria": {
+      "categories": ["Sale"],
+      "maxPrice": 50000
+    }
+  }'</pre>
+    </div>
+
+    <div class="section">
+        <h2>📁 Files Created</h2>
+        <ul>
+            <li><strong>Entities:</strong> Label.java, Filter.java, FilterSubscription.java</li>
+            <li><strong>DTOs:</strong> LabelDto.java, FilterDto.java, FilterCriteriaDto.java, FilterSubscriptionDto.java</li>
+            <li><strong>Repositories:</strong> LabelRepository.java, FilterRepository.java, FilterSubscriptionRepository.java</li>
+            <li><strong>Services:</strong> FilterService.java, LabelService.java, FilterSubscriptionService.java, NotificationService.java</li>
+            <li><strong>Controllers:</strong> FilterController.java, ManagerController.java (new), AdminController.java (updated)</li>
+            <li><strong>Frontend:</strong> filters.js, updated index.html and style.css</li>
+            <li><strong>Documentation:</strong> FILTERING_SYSTEM.md, schema-documentation.sql</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>✨ UI Features</h2>
+        <ul class="feature-list">
+            <li>Filter toggle button with active filter count badge</li>
+            <li>Collapsible filter panel with category, price, location, and label filters</li>
+            <li>Saved filters section showing admin-created filters with subscribe buttons</li>
+            <li>Active filters display with removable tags</li>
+            <li>Apply and clear filter buttons</li>
+            <li>Real-time filter count updates</li>
+            <li>Responsive design for mobile and desktop</li>
+        </ul>
+    </div>
+
+</body>
+</html>

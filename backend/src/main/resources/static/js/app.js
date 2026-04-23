@@ -267,71 +267,60 @@
       card.className = 'offer-card';
       const imgUrl = offer.imageUrl || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400';
 
-      if (isOffersPage) {
-        var desc = offer.description || '';
-        if (desc.length > 150) desc = desc.substring(0, 147) + '...';
-        card.innerHTML =
-          '<div class="offer-card-image" style="background-image:url(\'' + imgUrl + '\')"></div>' +
-          '<div class="offer-card-body">' +
-            '<h3 class="offer-card-title">' + escapeHtml(offer.title) + '</h3>' +
-            (offer.location ? '<p class="offer-card-location">' + escapeHtml(offer.location) + '</p>' : '') +
-            '<p class="offer-card-price">' + formatPrice(offer.price) + '</p>' +
-            (desc ? '<p class="offer-card-description">' + escapeHtml(desc) + '</p>' : '') +
-            '<div class="offer-card-actions">' +
-              '<button type="button" class="btn-offer btn-offer-primary btn-view-more" data-id="' + offer.id + '">View more</button>' +
-              '<button type="button" class="btn-offer btn-notify ' + (offer.subscribed ? 'subscribed' : '') + '" data-id="' + offer.id + '" data-subscribed="' + !!offer.subscribed + '">' +
-                (offer.subscribed ? 'Notifying' : 'Get notified') +
-              '</button>' +
-            '</div>' +
-          '</div>';
-      } else {
-        card.innerHTML =
-          '<div class="offer-card-image" style="background-image:url(\'' + imgUrl + '\')"></div>' +
-          '<div class="offer-card-body">' +
-            '<h3 class="offer-card-title">' + escapeHtml(offer.title) + '</h3>' +
-            (offer.location ? '<p class="offer-card-location">' + escapeHtml(offer.location) + '</p>' : '') +
-            '<p class="offer-card-price">' + formatPrice(offer.price) + '</p>' +
-            '<button type="button" class="btn-notify ' + (offer.subscribed ? 'subscribed' : '') + '" data-id="' + offer.id + '" data-subscribed="' + !!offer.subscribed + '">' +
+      // Build category badge
+      var categoryBadge = '';
+      if (offer.category) {
+        categoryBadge = '<span class="offer-category">' + escapeHtml(offer.category) + '</span>';
+      }
+
+      // Build labels
+      var labelsHtml = '';
+      if (offer.labels && offer.labels.length > 0) {
+        labelsHtml = '<div class="offer-labels">';
+        offer.labels.forEach(function(label) {
+          var style = label.color ? ' style="background-color:' + label.color + ';color:white;"' : '';
+          labelsHtml += '<span class="offer-label"' + style + '>' + escapeHtml(label.name) + '</span>';
+        });
+        labelsHtml += '</div>';
+      }
+
+      card.innerHTML =
+        '<div class="offer-card-image" style="background-image:url(\'' + imgUrl + '\')"></div>' +
+        '<div class="offer-card-body">' +
+          '<h3 class="offer-card-title">' + escapeHtml(offer.title) + '</h3>' +
+          categoryBadge +
+          labelsHtml +
+          (offer.location ? '<p class="offer-card-location">' + escapeHtml(offer.location) + '</p>' : '') +
+          '<p class="offer-card-price">' + formatPrice(offer.price) + '</p>' +
+          '<div class="offer-card-actions">' +
+            '<button type="button" class="btn-offer btn-offer-primary btn-view-more" data-id="' + offer.id + '" data-offer=\'' + JSON.stringify(offer).replace(/'/g, '&#39;') + '\'>View</button>' +
+            '<button type="button" class="btn-offer btn-notify ' + (offer.subscribed ? 'subscribed' : '') + '" data-id="' + offer.id + '" data-subscribed="' + !!offer.subscribed + '">' +
               (offer.subscribed ? 'Notifying' : 'Get notified') +
             '</button>' +
-          '</div>';
-      }
+          '</div>' +
+        '</div>';
 
       list.appendChild(card);
     });
 
-    if (isOffersPage) {
-      list.querySelectorAll('.btn-view-more').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          if (!currentUser) {
-            openModal('modal-signup');
-            return;
-          }
-          // For now, show full description by navigating to a dedicated page later.
-          // Placeholder: you can extend this to open a details view.
-          // window.location.href = '/offers/' + btn.getAttribute('data-id');
-        });
+    // Attach event handlers for View more buttons
+    list.querySelectorAll('.btn-view-more').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var offerData = JSON.parse(btn.getAttribute('data-offer'));
+        openOfferModal(offerData);
       });
-      list.querySelectorAll('.btn-notify').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          if (!currentUser) {
-            openModal('modal-signup');
-            return;
-          }
-          handleNotify(btn);
-        });
+    });
+
+    // Attach event handlers for notify buttons
+    list.querySelectorAll('.btn-notify').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!currentUser) {
+          openModal('modal-signup');
+          return;
+        }
+        handleNotify(btn);
       });
-    } else {
-      list.querySelectorAll('.btn-notify').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          if (!currentUser) {
-            openModal('modal-signup');
-            return;
-          }
-          handleNotify(btn);
-        });
-      });
-    }
+    });
   }
 
   function escapeHtml(s) {
@@ -345,6 +334,36 @@
     if (n == null) return '—';
     return new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
   }
+
+  // Make this function globally accessible
+  window.openOfferModal = function(offer) {
+    const modal = document.getElementById('modal-offer-details');
+    if (!modal) return;
+
+    // Populate modal content
+    document.getElementById('offer-modal-title').textContent = offer.title || '';
+    document.getElementById('offer-modal-location').textContent = offer.location || 'N/A';
+    document.getElementById('offer-modal-price').textContent = formatPrice(offer.price);
+    document.getElementById('offer-modal-category').textContent = offer.category || 'N/A';
+    document.getElementById('offer-modal-description').textContent = offer.description || 'No description available.';
+
+    const imgUrl = offer.imageUrl || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800';
+    document.getElementById('offer-modal-image').style.backgroundImage = 'url(\'' + imgUrl + '\')';
+
+    // Build labels
+    var labelsContainer = document.getElementById('offer-modal-labels');
+    if (offer.labels && offer.labels.length > 0) {
+      labelsContainer.innerHTML = offer.labels.map(function(label) {
+        var style = label.color ? ' style="background-color:' + label.color + ';color:white;"' : '';
+        return '<span class="offer-label"' + style + '>' + escapeHtml(label.name) + '</span>';
+      }).join('');
+      labelsContainer.classList.remove('hidden');
+    } else {
+      labelsContainer.classList.add('hidden');
+    }
+
+    openModal('modal-offer-details');
+  };
 
   async function handleNotify(btn) {
     const id = btn.getAttribute('data-id');

@@ -54,6 +54,68 @@
 
         <section id="offers" class="offers-section">
             <h2 class="section-title">CURRENT OFFERS</h2>
+
+            <!-- Filter Panel -->
+            <div class="filter-panel" id="filter-panel">
+                <button class="filter-toggle" id="filter-toggle">
+                    <span>🔍 FILTERS</span>
+                    <span class="filter-count hidden" id="filter-count">0</span>
+                </button>
+
+                <div class="filter-content hidden" id="filter-content">
+                    <div class="filter-section">
+                        <h3>Category</h3>
+                        <select id="filter-category">
+                            <option value="">All Categories</option>
+                            <option value="Sale">Sale</option>
+                            <option value="Rent">Rent</option>
+                            <option value="Commercial">Commercial</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-section">
+                        <h3>Price Range</h3>
+                        <div class="filter-row">
+                            <input type="number" id="filter-min-price" placeholder="Min Price" min="0">
+                            <span>-</span>
+                            <input type="number" id="filter-max-price" placeholder="Max Price" min="0">
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h3>Location</h3>
+                        <input type="text" id="filter-location" placeholder="City or area">
+                    </div>
+
+                    <div class="filter-section" id="labels-section">
+                        <h3>Labels</h3>
+                        <div id="filter-labels" class="labels-list">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+
+                    <div class="filter-section" id="saved-filters-section">
+                        <h3>Saved Filters</h3>
+                        <div id="saved-filters-list" class="saved-filters-list">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="btn btn-secondary" id="filter-clear">Clear All</button>
+                        <button class="btn btn-cta" id="filter-apply">Apply Filters</button>
+                        <button class="btn btn-outline" id="filter-save" style="display:none;">Save Search</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Filters Display -->
+            <div class="active-filters hidden" id="active-filters">
+                <span class="active-filters-label">Active Filters:</span>
+                <div class="active-filters-tags" id="active-filters-tags"></div>
+                <span class="filter-results-count hidden" id="filter-results-count">0 results</span>
+            </div>
+
             <div id="offers-list" class="offers-grid">
                 <!-- Filled by JS -->
             </div>
@@ -221,6 +283,30 @@
         </div>
     </div>
 
+    <div id="modal-offer-details" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-box modal-box-large modal-offer">
+            <div class="offer-modal-image" id="offer-modal-image"></div>
+            <div class="offer-modal-content">
+                <h2 id="offer-modal-title">Offer Title</h2>
+                <div class="offer-modal-meta">
+                    <span class="offer-modal-category" id="offer-modal-category">Category</span>
+                    <div class="offer-labels" id="offer-modal-labels"></div>
+                </div>
+                <div class="offer-modal-details">
+                    <p class="offer-modal-location"><strong>Location:</strong> <span id="offer-modal-location">N/A</span></p>
+                    <p class="offer-modal-price"><strong>Price:</strong> <span id="offer-modal-price">—</span></p>
+                </div>
+                <div class="offer-modal-description">
+                    <h3>Description</h3>
+                    <p id="offer-modal-description">No description available.</p>
+                </div>
+            </div>
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
     <script src="/js/app.js"></script>
+    <script src="/js/filters.js"></script>
 </body>
 </html>

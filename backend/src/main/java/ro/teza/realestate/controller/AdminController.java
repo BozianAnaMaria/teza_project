@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import ro.teza.realestate.audit.entity.AuditLog;
 import ro.teza.realestate.audit.service.AuditService;
+import ro.teza.realestate.dto.FilterDto;
 import ro.teza.realestate.dto.UserDto;
+import ro.teza.realestate.entity.Filter;
 import ro.teza.realestate.entity.Role;
 import ro.teza.realestate.validation.ValidPassword;
 import ro.teza.realestate.entity.User;
+import ro.teza.realestate.service.FilterService;
 import ro.teza.realestate.service.UserService;
 
 import java.math.BigDecimal;
@@ -27,10 +30,12 @@ public class AdminController {
 
     private final UserService userService;
     private final AuditService auditService;
+    private final FilterService filterService;
 
-    public AdminController(UserService userService, AuditService auditService) {
+    public AdminController(UserService userService, AuditService auditService, FilterService filterService) {
         this.userService = userService;
         this.auditService = auditService;
+        this.filterService = filterService;
     }
 
     @GetMapping("/users")
@@ -97,6 +102,55 @@ public class AdminController {
             logs = auditService.findAll(PageRequest.of(page, size));
         }
         return ResponseEntity.ok(logs);
+    }
+
+    // Filter Management Endpoints (ADMIN only)
+
+    @GetMapping("/filters")
+    public ResponseEntity<List<FilterDto>> listAllFilters() {
+        User admin = userService.getCurrentUser().orElseThrow(() -> new RuntimeException("Unauthorized"));
+        return ResponseEntity.ok(filterService.findAllFilters(admin));
+    }
+
+    @GetMapping("/filters/{id}")
+    public ResponseEntity<FilterDto> getFilterById(@PathVariable Long id) {
+        User admin = userService.getCurrentUser().orElseThrow(() -> new RuntimeException("Unauthorized"));
+        return filterService.findFilterDtoById(id, admin)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/filters")
+    public ResponseEntity<?> createFilter(@Valid @RequestBody FilterDto dto, HttpServletRequest request) {
+        User admin = userService.getCurrentUser().orElseThrow(() -> new RuntimeException("Unauthorized"));
+        try {
+            Filter filter = filterService.create(dto, admin, request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(filterService.toDto(filter, admin));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/filters/{id}")
+    public ResponseEntity<?> updateFilter(@PathVariable Long id, @Valid @RequestBody FilterDto dto, HttpServletRequest request) {
+        User admin = userService.getCurrentUser().orElseThrow(() -> new RuntimeException("Unauthorized"));
+        try {
+            Filter filter = filterService.update(id, dto, admin, request);
+            return ResponseEntity.ok(filterService.toDto(filter, admin));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/filters/{id}")
+    public ResponseEntity<?> deleteFilter(@PathVariable Long id, HttpServletRequest request) {
+        User admin = userService.getCurrentUser().orElseThrow(() -> new RuntimeException("Unauthorized"));
+        try {
+            filterService.delete(id, admin, request);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     public static class CreateUserRequest {

@@ -97,10 +97,11 @@
   var sections = {
     users: document.getElementById('section-users'),
     offers: document.getElementById('section-offers'),
+    filters: document.getElementById('section-filters'),
     subscriptions: document.getElementById('section-subscriptions'),
     audit: document.getElementById('section-audit')
   };
-  var tabs = ['tab-users', 'tab-offers', 'tab-subscriptions', 'tab-audit'];
+  var tabs = ['tab-users', 'tab-offers', 'tab-filters', 'tab-subscriptions', 'tab-audit'];
   tabs.forEach(function (tabId, i) {
     document.getElementById(tabId).addEventListener('click', function (e) {
       e.preventDefault();
@@ -109,6 +110,7 @@
       Object.keys(sections).forEach(function (k) { hide(sections[k]); });
       show(sections[Object.keys(sections)[i]]);
       if (tabId === 'tab-offers') loadAdminOffers();
+      if (tabId === 'tab-filters') loadFilters();
       if (tabId === 'tab-subscriptions') loadAdminSubscriptions();
       if (tabId === 'tab-audit') loadAudit(0);
     });
@@ -421,6 +423,156 @@
   }
 
   document.getElementById('audit-apply').addEventListener('click', function () { loadAudit(0); });
+
+  // ——— Filters ———
+  function loadFilters() {
+    var loading = document.getElementById('filters-loading');
+    var wrap = document.getElementById('filters-table-wrap');
+    var tbody = document.getElementById('filters-tbody');
+    show(loading);
+    hide(wrap);
+
+    get('/admin/filters').then(function (res) {
+      return res.json();
+    }).then(function (data) {
+      hide(loading);
+      tbody.innerHTML = '';
+      if (data && data.length > 0) {
+        data.forEach(function (filter) {
+          var tr = document.createElement('tr');
+
+          // Format criteria for display
+          var criteriaText = [];
+          if (filter.criteria) {
+            var c = filter.criteria;
+            if (c.categories && c.categories.length > 0) criteriaText.push('Cat: ' + c.categories.join(', '));
+            if (c.labelIds && c.labelIds.length > 0) criteriaText.push('Labels: ' + c.labelIds.join(', '));
+            if (c.minPrice) criteriaText.push('Min: ' + formatPrice(c.minPrice));
+            if (c.maxPrice) criteriaText.push('Max: ' + formatPrice(c.maxPrice));
+            if (c.location) criteriaText.push('Loc: ' + escapeHtml(c.location));
+            if (c.startDate) criteriaText.push('From: ' + new Date(c.startDate).toLocaleDateString());
+            if (c.endDate) criteriaText.push('To: ' + new Date(c.endDate).toLocaleDateString());
+          }
+
+          tr.innerHTML =
+            '<td>' + filter.id + '</td>' +
+            '<td>' + escapeHtml(filter.name) + '</td>' +
+            '<td>' + escapeHtml(filter.description || '') + '</td>' +
+            '<td>' + (filter.active ? '<span style="color:green">✓</span>' : '<span style="color:red">✗</span>') + '</td>' +
+            '<td style="font-size:0.85rem;">' + (criteriaText.length > 0 ? criteriaText.join('<br>') : '—') + '</td>' +
+            '<td>' +
+              '<button class="btn-link" onclick="editFilter(' + filter.id + ')">Edit</button> ' +
+              '<button class="btn-link" onclick="deleteFilter(' + filter.id + ', \'' + escapeHtml(filter.name).replace(/'/g, "\\'") + '\')">Delete</button>' +
+            '</td>';
+          tbody.appendChild(tr);
+        });
+        show(wrap);
+      }
+    }).catch(function (err) {
+      console.error('Error loading filters:', err);
+      hide(loading);
+    });
+  }
+
+  window.editFilter = function (id) {
+    get('/admin/filters/' + id).then(function (res) {
+      return res.json();
+    }).then(function (filter) {
+      document.getElementById('filter-id').value = filter.id;
+      document.getElementById('modal-filter-title').textContent = 'Edit Filter';
+      var form = document.getElementById('form-filter');
+      form.name.value = filter.name || '';
+      form.description.value = filter.description || '';
+      form.active.checked = filter.active;
+
+      // Populate criteria fields
+      if (filter.criteria) {
+        var c = filter.criteria;
+        form.categories.value = c.categories ? c.categories.join(', ') : '';
+        form.labelIds.value = c.labelIds ? c.labelIds.join(', ') : '';
+        form.minPrice.value = c.minPrice || '';
+        form.maxPrice.value = c.maxPrice || '';
+        form.location.value = c.location || '';
+        if (c.startDate) form.startDate.value = c.startDate.split('T')[0];
+        if (c.endDate) form.endDate.value = c.endDate.split('T')[0];
+      }
+
+      show(document.getElementById('modal-filter'));
+    });
+  };
+
+  window.deleteFilter = function (id, name) {
+    if (!confirm('Delete filter "' + name + '"?')) return;
+    del('/admin/filters/' + id).then(function () {
+      loadFilters();
+    });
+  };
+
+  document.getElementById('btn-add-filter').addEventListener('click', function () {
+    document.getElementById('filter-id').value = '';
+    document.getElementById('modal-filter-title').textContent = 'Create Filter';
+    var form = document.getElementById('form-filter');
+    form.reset();
+    form.active.checked = true;
+    show(document.getElementById('modal-filter'));
+  });
+
+  document.getElementById('form-filter').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var form = this;
+    var filterId = document.getElementById('filter-id').value;
+    var errorEl = document.getElementById('filter-form-error');
+    errorEl.classList.add('hidden');
+
+    // Build criteria object
+    var criteria = {};
+
+    if (form.categories.value.trim()) {
+      criteria.categories = form.categories.value.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    }
+
+    if (form.labelIds.value.trim()) {
+      criteria.labelIds = form.labelIds.value.split(',').map(function(s) { return parseInt(s.trim()); }).filter(function(n) { return !isNaN(n); });
+    }
+
+    if (form.minPrice.value) criteria.minPrice = parseFloat(form.minPrice.value);
+    if (form.maxPrice.value) criteria.maxPrice = parseFloat(form.maxPrice.value);
+    if (form.location.value.trim()) criteria.location = form.location.value.trim();
+
+    if (form.startDate.value) criteria.startDate = new Date(form.startDate.value).toISOString();
+    if (form.endDate.value) criteria.endDate = new Date(form.endDate.value).toISOString();
+
+    var payload = {
+      name: form.name.value,
+      description: form.description.value,
+      active: form.active.checked,
+      criteria: criteria
+    };
+
+    var promise = filterId ? put('/admin/filters/' + filterId, payload) : post('/admin/filters', payload);
+
+    promise.then(function (res) {
+      if (res.ok) {
+        hide(document.getElementById('modal-filter'));
+        loadFilters();
+      } else {
+        return res.json().then(function (data) {
+          errorEl.textContent = data.error || 'Error saving filter';
+          errorEl.classList.remove('hidden');
+        });
+      }
+    });
+  });
+
+  document.getElementById('filter-cancel').addEventListener('click', function () {
+    hide(document.getElementById('modal-filter'));
+  });
+
+  var filterModal = document.getElementById('modal-filter');
+  if (filterModal) {
+    filterModal.querySelector('.modal-backdrop').addEventListener('click', function () { hide(filterModal); });
+    filterModal.querySelector('.modal-close').addEventListener('click', function () { hide(filterModal); });
+  }
 
   checkAccess().then(function (ok) {
     if (ok) {

@@ -57,10 +57,20 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/offers/*").hasAnyRole("MANAGER", "ADMIN")
                 // Manager: view who is subscribed to which offer
                 .requestMatchers("/api/subscriptions", "/api/subscriptions/*").hasAnyRole("MANAGER", "ADMIN")
-                // Admin only: users CRUD, audit logs
+                // Admin only: users CRUD, audit logs, filters CRUD
                 .requestMatchers("/api/admin/users/**").hasRole("ADMIN")
                 .requestMatchers("/api/admin/audit/**").hasRole("ADMIN")
+                .requestMatchers("/api/admin/filters/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/offers/*").hasRole("ADMIN")
+                // Manager and Admin: label management, assign labels to offers
+                .requestMatchers("/api/manager/**").hasAnyRole("MANAGER", "ADMIN")
+                // Filters: public read, authenticated subscriptions
+                .requestMatchers(HttpMethod.GET, "/api/filters").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/filters/*").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/filters/*/subscribe").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/filters/*/subscribe").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/filters/subscriptions").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/filters/apply").permitAll()
                 // Default: require auth for other API
                 .requestMatchers("/api/**").authenticated()
             )

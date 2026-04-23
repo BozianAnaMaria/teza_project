@@ -32,6 +32,7 @@
         <div id="manager-content" class="hidden">
             <div class="tabs">
                 <a href="#" id="tab-offers" class="active">Offers</a>
+                <a href="#" id="tab-labels">Labels</a>
                 <a href="#" id="tab-subscriptions">Subscriptions</a>
             </div>
 
@@ -57,6 +58,31 @@
                         </table>
                     </div>
                     <div id="offers-empty" class="empty hidden">No offers yet. Add one above.</div>
+                </div>
+            </section>
+
+            <section id="section-labels" class="panel hidden">
+                <h2 class="panel-title">Labels Management</h2>
+                <div class="panel-body">
+                    <p style="margin-bottom: 1rem; color: #666;">Create and manage labels that can be assigned to offers. Labels are used for filtering and categorization.</p>
+                    <div class="form-row">
+                        <button type="button" id="btn-add-label" class="btn btn-cta">+ Create Label</button>
+                    </div>
+                    <div id="labels-loading" class="loading">Loading labels…</div>
+                    <div id="labels-table-wrap" class="table-wrap hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Color</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="labels-tbody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -103,13 +129,48 @@
                 <div class="form-row">
                     <label>Image URL <input type="url" name="imageUrl"></label>
                 </div>
+                <div class="form-row">
+                    <label>Category <input type="text" name="category" placeholder="e.g., Sale, Rent, Commercial"></label>
+                </div>
                 <div class="form-row" id="row-active">
                     <label><input type="checkbox" name="active" checked> Active</label>
+                </div>
+                <div class="form-row" id="row-labels">
+                    <label>Labels (select multiple)</label>
+                    <div id="offer-labels-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 0.5rem; border-radius: 4px;">
+                        <!-- Filled by JS -->
+                    </div>
                 </div>
                 <p id="offer-form-error" class="error hidden"></p>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-cta">Save</button>
                     <button type="button" id="offer-cancel" class="btn btn-outline">Cancel</button>
+                </div>
+            </form>
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
+    <div id="modal-label" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-box">
+            <h3 id="modal-label-title">Create Label</h3>
+            <form id="form-label">
+                <input type="hidden" id="label-id" name="id">
+                <div class="form-row">
+                    <label>Label Name <input type="text" name="name" required placeholder="e.g., Luxury, New Construction"></label>
+                </div>
+                <div class="form-row">
+                    <label>Description <textarea name="description" rows="2" placeholder="Brief description"></textarea></label>
+                </div>
+                <div class="form-row">
+                    <label>Color (hex code) <input type="text" name="color" placeholder="#FFD700" maxlength="7" pattern="#[0-9A-Fa-f]{6}"></label>
+                    <small style="color: #666;">Use format: #RRGGBB (e.g., #FFD700 for gold)</small>
+                </div>
+                <p id="label-form-error" class="error hidden"></p>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-cta">Save Label</button>
+                    <button type="button" id="label-cancel" class="btn btn-outline">Cancel</button>
                 </div>
             </form>
             <button type="button" class="modal-close" aria-label="Close">&times;</button>

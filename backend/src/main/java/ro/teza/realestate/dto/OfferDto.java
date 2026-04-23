@@ -2,6 +2,7 @@ package ro.teza.realestate.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 public class OfferDto {
 
@@ -11,6 +12,8 @@ public class OfferDto {
     private BigDecimal price;
     private String location;
     private String imageUrl;
+    private String category;
+    private List<LabelDto> labels;
     private Instant createdAt;
     private Instant updatedAt;
     private boolean active;
@@ -94,5 +97,21 @@ public class OfferDto {
 
     public void setSubscribed(boolean subscribed) {
         this.subscribed = subscribed;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public List<LabelDto> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<LabelDto> labels) {
+        this.labels = labels;
     }
 }

@@ -108,6 +108,27 @@
     renderOffers();
   });
 
+  // Contact form modal
+  const btnContactForm = document.getElementById('btn-contact-form');
+  if (btnContactForm) {
+    btnContactForm.addEventListener('click', function () {
+      openModal('modal-contact');
+    });
+  }
+
+  // Modal switching
+  document.getElementById('switch-to-signup').addEventListener('click', function (e) {
+    e.preventDefault();
+    closeModal('modal-login');
+    openModal('modal-signup');
+  });
+
+  document.getElementById('switch-to-login').addEventListener('click', function (e) {
+    e.preventDefault();
+    closeModal('modal-signup');
+    openModal('modal-login');
+  });
+
   document.querySelectorAll('.modal-close, .modal-backdrop').forEach(function (node) {
     node.addEventListener('click', function () {
       const modal = node.closest('.modal');
@@ -225,13 +246,20 @@
     const offers = data.content || [];
     if (offers.length === 0) {
       show(empty);
-      document.getElementById('stat-offers').textContent = '0';
+      var statEl = document.getElementById('stat-offers');
+      if (statEl) statEl.textContent = '0';
+      var statAboutEl = document.getElementById('stat-about-offers');
+      if (statAboutEl) statAboutEl.textContent = '0';
       return;
     }
 
     var statEl = document.getElementById('stat-offers');
     if (statEl) {
       statEl.textContent = offers.length;
+    }
+    var statAboutEl = document.getElementById('stat-about-offers');
+    if (statAboutEl) {
+      statAboutEl.textContent = offers.length;
     }
 
     offers.forEach(function (offer) {
@@ -276,7 +304,7 @@
       list.querySelectorAll('.btn-view-more').forEach(function (btn) {
         btn.addEventListener('click', function () {
           if (!currentUser) {
-            openModal('modal-login');
+            openModal('modal-signup');
             return;
           }
           // For now, show full description by navigating to a dedicated page later.
@@ -287,7 +315,7 @@
       list.querySelectorAll('.btn-notify').forEach(function (btn) {
         btn.addEventListener('click', function () {
           if (!currentUser) {
-            openModal('modal-login');
+            openModal('modal-signup');
             return;
           }
           handleNotify(btn);
@@ -296,6 +324,10 @@
     } else {
       list.querySelectorAll('.btn-notify').forEach(function (btn) {
         btn.addEventListener('click', function () {
+          if (!currentUser) {
+            openModal('modal-signup');
+            return;
+          }
           handleNotify(btn);
         });
       });
@@ -319,7 +351,7 @@
     const subscribed = btn.getAttribute('data-subscribed') === 'true';
 
     if (!currentUser) {
-      alert('Please log in or sign up to get notified about this property.');
+      openModal('modal-signup');
       return;
     }
 
@@ -336,6 +368,46 @@
     btn.setAttribute('data-subscribed', subscribed ? 'false' : 'true');
     btn.textContent = subscribed ? 'Get notified' : 'Notifying';
     btn.classList.toggle('subscribed', !subscribed);
+  }
+
+  // Contact form handler
+  const contactForm = document.getElementById('form-contact');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const phone = form.phone.value.trim();
+      const subject = form.subject.value.trim();
+      const message = form.message.value.trim();
+
+      showError('contact-error', '');
+      const successEl = document.getElementById('contact-success');
+      if (successEl) successEl.classList.add('hidden');
+
+      if (!name || !email || !subject || !message) {
+        showError('contact-error', 'Please fill in all required fields.');
+        return;
+      }
+
+      // Simulate sending message (no backend endpoint yet)
+      console.log('Contact form submitted:', { name, email, phone, subject, message });
+
+      // Show success message
+      if (successEl) {
+        successEl.classList.remove('hidden');
+      }
+
+      // Reset form
+      form.reset();
+
+      // Close modal and hide success message after 3 seconds
+      setTimeout(function () {
+        if (successEl) successEl.classList.add('hidden');
+        closeModal('modal-contact');
+      }, 3000);
+    });
   }
 
   loadCurrentUser().then(function () {
