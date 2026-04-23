@@ -45,9 +45,6 @@
                 <h2 class="content-heading">AT OUR PLATFORM,</h2>
                 <p class="content-text">We believe finding a home is more than a transaction—it's about spaces that inspire, function beautifully, and reflect the people who live in them.</p>
                 <p class="content-stat"><span class="stat-number" id="stat-offers">0</span> active listings</p>
-                <div class="content-actions">
-                    <a href="/offers" class="btn btn-cta">VIEW OFFERS</a>
-                </div>
             </div>
             <div class="content-right">
                 <p class="content-stat dark"><span class="stat-number" id="stat-notify">—</span> users get notified</p>
@@ -63,6 +60,115 @@
             <div id="offers-loading" class="loading">Loading offers…</div>
             <div id="offers-empty" class="empty hidden">No offers at the moment. Check back later.</div>
         </section>
+
+        <section id="about" class="about-section">
+            <div class="about-container">
+                <h2 class="section-title">ABOUT US</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <h3>Your Trusted Partner in Real Estate</h3>
+                        <p>We are a modern real estate platform dedicated to connecting people with their perfect spaces. Whether you're looking for your first apartment, upgrading to a larger home, or searching for the ideal investment property, we're here to make the process seamless and transparent.</p>
+                        <p>Our platform combines cutting-edge technology with personalized service. Get instant notifications when properties matching your criteria become available, browse high-quality listings with detailed information, and connect with verified property managers—all in one place.</p>
+
+                        <h3>What Sets Us Apart</h3>
+                        <ul class="about-features">
+                            <li><strong>Smart Notifications:</strong> Never miss an opportunity. Subscribe to properties and get instant alerts when new offers match your interests.</li>
+                            <li><strong>Verified Listings:</strong> All properties are verified by our team to ensure accuracy and authenticity.</li>
+                            <li><strong>User-Friendly Platform:</strong> Browse, filter, and subscribe to properties with an intuitive interface designed for your convenience.</li>
+                            <li><strong>Transparent Process:</strong> No hidden fees, no surprises. We believe in complete transparency throughout your property search.</li>
+                            <li><strong>Local Expertise:</strong> Our team knows the market inside and out, providing you with valuable insights and guidance.</li>
+                        </ul>
+
+                        <h3>Our Mission</h3>
+                        <p>We believe finding a home should be an exciting journey, not a stressful one. Our mission is to empower you with the tools, information, and support you need to make confident decisions. From the first search to the final handshake, we're committed to making your real estate experience exceptional.</p>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-about-offers">0</div>
+                            <div class="stat-label">Active Listings</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">500+</div>
+                            <div class="stat-label">Happy Clients</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">24/7</div>
+                            <div class="stat-label">Support Available</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">100%</div>
+                            <div class="stat-label">Verified Properties</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contacts" class="contacts-section">
+            <div class="contacts-container">
+                <h2 class="section-title">GET IN TOUCH</h2>
+                <div class="contacts-content">
+                    <div class="contact-info">
+                        <h3>Contact Information</h3>
+                        <p class="contact-intro">Have questions or need assistance? We're here to help! Reach out to us through any of the channels below, and our team will get back to you as soon as possible.</p>
+
+                        <div class="contact-methods">
+                            <div class="contact-item">
+                                <div class="contact-icon">📍</div>
+                                <div class="contact-details">
+                                    <h4>Office Location</h4>
+                                    <p>Strada Ștefan cel Mare 123<br>Chișinău, MD-2001<br>Moldova</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-item">
+                                <div class="contact-icon">📧</div>
+                                <div class="contact-details">
+                                    <h4>Email</h4>
+                                    <p><a href="mailto:info@realestate.md">info@realestate.md</a><br>
+                                    <a href="mailto:support@realestate.md">support@realestate.md</a></p>
+                                </div>
+                            </div>
+
+                            <div class="contact-item">
+                                <div class="contact-icon">📞</div>
+                                <div class="contact-details">
+                                    <h4>Phone</h4>
+                                    <p>+373 22 123 456<br>+373 69 123 456 (Mobile)</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-item">
+                                <div class="contact-icon">🕐</div>
+                                <div class="contact-details">
+                                    <h4>Business Hours</h4>
+                                    <p>Monday - Friday: 9:00 AM - 6:00 PM<br>
+                                    Saturday: 10:00 AM - 4:00 PM<br>
+                                    Sunday: Closed</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-social">
+                            <h4>Follow Us</h4>
+                            <p>Stay updated with the latest listings and real estate news:</p>
+                            <div class="social-links">
+                                <a href="#" class="social-link" aria-label="Facebook">Facebook</a>
+                                <a href="#" class="social-link" aria-label="Instagram">Instagram</a>
+                                <a href="#" class="social-link" aria-label="LinkedIn">LinkedIn</a>
+                                <a href="#" class="social-link" aria-label="Telegram">Telegram</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-cta">
+                        <h3>Send us a Message</h3>
+                        <p>Have a question or want to learn more about our properties? We'd love to hear from you!</p>
+                        <button type="button" id="btn-contact-form" class="btn btn-cta">OPEN CONTACT FORM</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Modals -->
@@ -76,6 +182,7 @@
                 <p id="login-error" class="error hidden"></p>
                 <button type="submit" class="btn btn-cta">LOG IN</button>
             </form>
+            <p class="modal-switch">Don't have an account? <a href="#" id="switch-to-signup">Sign up</a></p>
             <button type="button" class="modal-close" aria-label="Close">&times;</button>
         </div>
     </div>
@@ -90,6 +197,25 @@
                 <p class="form-hint">Min 6 characters, one uppercase, one lowercase, one number, one symbol (!#$%&*()-_=+[]{}|;:,.?/~). No quotes or &lt;&gt;</p>
                 <p id="signup-error" class="error hidden"></p>
                 <button type="submit" class="btn btn-cta">SIGN UP</button>
+            </form>
+            <p class="modal-switch">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+        </div>
+    </div>
+
+    <div id="modal-contact" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-box modal-box-large">
+            <h3>Send us a Message</h3>
+            <form id="form-contact">
+                <label>Your Name <input type="text" name="name" required placeholder="John Doe"></label>
+                <label>Email Address <input type="email" name="email" required placeholder="john@example.com"></label>
+                <label>Phone Number <input type="tel" name="phone" placeholder="+373 69 123 456"></label>
+                <label>Subject <input type="text" name="subject" required placeholder="Property inquiry"></label>
+                <label>Message <textarea name="message" rows="5" required placeholder="How can we help you?"></textarea></label>
+                <p id="contact-success" class="success hidden">Thank you! We'll get back to you soon.</p>
+                <p id="contact-error" class="error hidden">Please fill in all required fields.</p>
+                <button type="submit" class="btn btn-cta">SEND MESSAGE</button>
             </form>
             <button type="button" class="modal-close" aria-label="Close">&times;</button>
         </div>
